@@ -66,16 +66,24 @@ assignments.two = function(){
                           //Otherwise, it would be undefined
                           console.log('sad');
                           this.mood = "sad.";
+                          console.log("first this: "+this);
                           $('#mood').text(this.mood);
 
                           //So what goes wrong here?
-                          setTimeout( (function() {
-                            this.mood = "Happy!";
+
+                          //Because setTimeout function is inside cheerUp function, 'this' is no longer a viking object. 'This' has become the window object because setTimeout runs in the Global object window. 
+
+                          //Solution: Set 'this' to a variable that will be in the closure of the parent function. The callback function has access to this parent's closure and we can use var that points to 'this' (viking object)
+                          var self = this;
+                          setTimeout( function callback() {
+
+                            self.mood = "Happy!";
+                            console.log("second this: "+self);
 
                             //THIS even runs correctly!
                             //What is UP with this? :(
-                            console.log("Cheered Up!")
-                          }), 1000);
+                            console.log("Cheered Up!");
+                          }, 1000);
                       })
            };
 
@@ -88,6 +96,7 @@ assignments.two = function(){
   //The problem is NOT here
   setTimeout( function() {
     $('#mood').text(viking.mood);
+    console.log(viking.mood);
   }, 1001);
 
 
